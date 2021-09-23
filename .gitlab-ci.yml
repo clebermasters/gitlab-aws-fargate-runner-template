@@ -1,0 +1,35 @@
+variables:
+  AWS_REGION: us-east-1
+  GIT_SSL_NO_VERIFY: "true"
+  MODE: BUILD
+
+  STACK_NAME: 'bitslovers-runner-dev'
+  VPC_IP: '<VPC_ID>' #VpcId
+  SUBNET: 'subnet-0d1f031232a5ed472' #SubnetId
+  GITLAB_RUL: 'http://YOUR_GITLAB.COM' #GitLabURL
+  GITLAB_TOKEN: '<YOUR_TOKEN>' #GitLabRegistrationToken
+  RUNNER_TAG: 'aws-fargate-dev' #RunnerTagList
+  DOCKER_IMAGE_DEFAULT: 'alpine:latest' #DockerImageDefault
+  DOCKER_IMAGE_RUNNER: 'XXXXXXXX.dkr.ecr.us-east-1.amazonaws.com/ec2-gitlab-runners-fargate:dev' #DockerImageRunner
+  AWS_SUBNET_ZONE: 'a' #SubnetZoneEC2Runner
+
+stages:
+  - prep
+  - deploy
+
+Prep:
+  image: docker:latest
+  stage: prep
+  script:
+    - docker build -t build-container .
+
+Deploy:
+  image:
+    name: build-container:latest
+    entrypoint: [""]
+  stage: deploy
+  script:
+    - aws configure set region ${AWS_REGION}
+    - sam deploy --template-file template.yml --stack-name $STACK_NAME --capabilities CAPABILITY_NAMED_IAM --region us-east-1 --parameter-overrides VpcId=\"${VPC_IP}\" SubnetId=\"${SUBNET}\" SubnetZoneEC2Runner=\"${AWS_SUBNET_ZONE}\" GitLabURL=\"${GITLAB_RUL}\" GitLabRegistrationToken=\"${GITLAB_TOKEN}\" RunnerTagList=\"${RUNNER_TAG}\" DockerImageRunner=\"${DOCKER_IMAGE_RUNNER}\" RunnerIamRole=\"${RUNNER_IAM_PROFILE}\" 
+    - echo "Access www.bitslovers.com for more information"
+    
