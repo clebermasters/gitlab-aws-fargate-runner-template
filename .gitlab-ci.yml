@@ -5,7 +5,7 @@ variables:
 
   STACK_NAME: 'bitslovers-runner-dev'
   VPC_IP: '<VPC_ID>' #VpcId
-  SUBNET: 'subnet-0d1f031232a5ed472' #SubnetId
+  SUBNET: '<SUBNET-ID>' #SubnetId
   GITLAB_RUL: 'http://YOUR_GITLAB.COM' #GitLabURL
   GITLAB_TOKEN: '<YOUR_TOKEN>' #GitLabRegistrationToken
   RUNNER_TAG: 'aws-fargate-dev' #RunnerTagList
